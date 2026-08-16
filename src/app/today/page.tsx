@@ -6,6 +6,14 @@ import { formatMoney } from "@/lib/utils";
 import { HealthBadge } from "@/components/health-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 
@@ -44,33 +52,33 @@ export default async function TodayPage() {
             <CardTitle>Open tasks</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <table>
-              <thead>
-                <tr>
-                  <th>Task</th>
-                  <th>Due</th>
-                  <th>Pri</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Task</TableHead>
+                  <TableHead>Due</TableHead>
+                  <TableHead>Pri</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {tasks.map((t) => (
-                  <tr key={t.id}>
-                    <td>
-                      <div className="font-medium text-stone-900">{t.title}</div>
+                  <TableRow key={t.id}>
+                    <TableCell>
+                      <div className="font-medium text-slate-50">{t.title}</div>
                       {t.deal && (
-                        <div className="text-xs text-stone-500">
+                        <div className="text-xs text-slate-400">
                           {t.deal.address}
                         </div>
                       )}
-                    </td>
-                    <td>
+                    </TableCell>
+                    <TableCell>
                       {t.dueAt ? format(t.dueAt, "MMM d") : "—"}
-                    </td>
-                    <td>{t.priority}</td>
-                  </tr>
+                    </TableCell>
+                    <TableCell>{t.priority}</TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
 
@@ -79,39 +87,39 @@ export default async function TodayPage() {
             <CardTitle>Recent deals</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <table>
-              <thead>
-                <tr>
-                  <th>Address</th>
-                  <th>MAO</th>
-                  <th>Health</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Address</TableHead>
+                  <TableHead>MAO</TableHead>
+                  <TableHead>Health</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {deals.map((d) => {
                   const u = underwriteDeal(d);
                   return (
-                    <tr key={d.id}>
-                      <td>
+                    <TableRow key={d.id}>
+                      <TableCell>
                         <Link
                           href={`/deals/${d.id}`}
-                          className="font-medium hover:underline"
+                          className="font-medium text-slate-50 transition-colors hover:text-sky-300"
                         >
                           {d.address}
                         </Link>
-                        <div className="text-xs text-stone-500">
+                        <div className="text-xs text-slate-400">
                           {d.market.name}
                         </div>
-                      </td>
-                      <td>{formatMoney(u.buyerMaxPurchasePrice)}</td>
-                      <td>
+                      </TableCell>
+                      <TableCell>{formatMoney(u.buyerMaxPurchasePrice)}</TableCell>
+                      <TableCell>
                         <HealthBadge health={u.health} />
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>

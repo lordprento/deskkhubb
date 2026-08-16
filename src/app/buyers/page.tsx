@@ -4,6 +4,14 @@ import { formatMoney } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 
@@ -26,37 +34,39 @@ export default async function BuyersPage() {
       </div>
       <Card>
         <CardContent className="p-0">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Market</th>
-                <th>Funding</th>
-                <th>Buy box</th>
-                <th>Max rehab</th>
-                <th>Contact</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Market</TableHead>
+                <TableHead>Funding</TableHead>
+                <TableHead>Buy box</TableHead>
+                <TableHead>Max rehab</TableHead>
+                <TableHead>Contact</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {buyers.map((b) => (
-                <tr key={b.id}>
-                  <td className="font-medium">{b.name}</td>
-                  <td>{b.market?.name ?? "—"}</td>
-                  <td>
+                <TableRow key={b.id}>
+                  <TableCell className="font-medium text-slate-50">
+                    {b.name}
+                  </TableCell>
+                  <TableCell>{b.market?.name ?? "—"}</TableCell>
+                  <TableCell>
                     <Badge variant="secondary">{b.funding}</Badge>
-                  </td>
-                  <td>
+                  </TableCell>
+                  <TableCell>
                     {formatMoney(b.buyBoxMin)} – {formatMoney(b.buyBoxMax)}
-                  </td>
-                  <td>{formatMoney(b.maxRehab)}</td>
-                  <td className="text-xs text-stone-600">
+                  </TableCell>
+                  <TableCell>{formatMoney(b.maxRehab)}</TableCell>
+                  <TableCell className="text-xs text-slate-400">
                     <div>{b.email ?? "—"}</div>
                     <div>{b.phone ?? ""}</div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

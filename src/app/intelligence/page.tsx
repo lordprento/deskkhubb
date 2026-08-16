@@ -1,16 +1,29 @@
 import { prisma } from "@/lib/db";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-function legalVariant(
-  status: string,
-): "health-green" | "health-yellow" | "health-red" | "health-unknown" {
-  if (status === "PERMISSIVE") return "health-green";
-  if (status === "LICENSE_REQUIRED") return "health-yellow";
-  if (status === "PROHIBITED") return "health-red";
-  return "health-unknown";
+function legalStyles(status: string) {
+  if (status === "PERMISSIVE") {
+    return "bg-green-500/20 text-green-400 border-green-500/30";
+  }
+  if (status === "LICENSE_REQUIRED") {
+    return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+  }
+  if (status === "PROHIBITED") {
+    return "bg-red-500/20 text-red-400 border-red-500/30";
+  }
+  return "bg-slate-500/20 text-slate-400 border-slate-500/30";
 }
 
 function rankScore(row: {
@@ -43,9 +56,7 @@ export default async function IntelligencePage() {
   const ranked = markets
     .map((m) => {
       const intel = m.marketIntel;
-      const score = intel
-        ? rankScore(intel)
-        : -100;
+      const score = intel ? rankScore(intel) : -100;
       return { market: m, intel, score };
     })
     .sort((a, b) => b.score - a.score);
@@ -62,51 +73,56 @@ export default async function IntelligencePage() {
 
       <Card>
         <CardContent className="p-0">
-          <table>
-            <thead>
-              <tr>
-                <th>Rank</th>
-                <th>Market</th>
-                <th>Legal</th>
-                <th>Buyer score</th>
-                <th>Seller score</th>
-                <th>Noise</th>
-                <th>Composite</th>
-                <th>Sources</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Rank</TableHead>
+                <TableHead>Market</TableHead>
+                <TableHead>Legal</TableHead>
+                <TableHead>Buyer score</TableHead>
+                <TableHead>Seller score</TableHead>
+                <TableHead>Noise</TableHead>
+                <TableHead>Composite</TableHead>
+                <TableHead>Sources</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {ranked.map((row, idx) => (
-                <tr key={row.market.id}>
-                  <td>{idx + 1}</td>
-                  <td className="font-medium">
+                <TableRow key={row.market.id}>
+                  <TableCell>{idx + 1}</TableCell>
+                  <TableCell className="font-medium text-slate-50">
                     {row.market.name}, {row.market.state}
-                  </td>
-                  <td>
-                    {row.intel ? (
-                      <Badge variant={legalVariant(row.intel.legalStatus)}>
-                        {row.intel.legalStatus}
-                      </Badge>
-                    ) : (
-                      <Badge variant="health-unknown">UNKNOWN</Badge>
-                    )}
-                  </td>
-                  <td>{row.intel?.buyerActivityScore?.toFixed(0) ?? "—"}</td>
-                  <td>{row.intel?.sellerActivityScore?.toFixed(0) ?? "—"}</td>
-                  <td>{row.intel?.competitorNoise ?? "—"}</td>
-                  <td className="font-medium">
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        legalStyles(row.intel?.legalStatus ?? "UNKNOWN"),
+                      )}
+                    >
+                      {row.intel?.legalStatus ?? "UNKNOWN"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {row.intel?.buyerActivityScore?.toFixed(0) ?? "—"}
+                  </TableCell>
+                  <TableCell>
+                    {row.intel?.sellerActivityScore?.toFixed(0) ?? "—"}
+                  </TableCell>
+                  <TableCell>{row.intel?.competitorNoise ?? "—"}</TableCell>
+                  <TableCell className="font-medium text-slate-50">
                     {row.intel ? row.score.toFixed(1) : "—"}
-                  </td>
-                  <td className="max-w-[280px] truncate text-xs text-stone-500">
+                  </TableCell>
+                  <TableCell className="max-w-[280px] truncate text-xs text-slate-400">
                     {row.intel?.sourceSummary ?? "No intel yet"}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
-      <p className="text-xs text-stone-500">
+      <p className="text-xs text-slate-400">
         DRAFT — not legal advice. Attorney/title review required. Legal status is
         a research heuristic from public commission pages, not a compliance
         opinion.

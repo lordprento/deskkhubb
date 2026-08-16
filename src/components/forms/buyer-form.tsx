@@ -54,7 +54,7 @@ export function BuyerForm({ markets }: { markets: MarketOption[] }) {
           <Label htmlFor="name">Buyer name</Label>
           <Input id="name" {...form.register("name")} />
           {form.formState.errors.name && (
-            <p className="text-xs text-red-700">
+            <p className="text-xs text-red-400">
               {form.formState.errors.name.message}
             </p>
           )}
@@ -124,7 +124,7 @@ export function BuyerForm({ markets }: { markets: MarketOption[] }) {
         <Label htmlFor="notes">Notes</Label>
         <Textarea id="notes" {...form.register("notes")} />
       </div>
-      {serverError && <p className="text-sm text-red-700">{serverError}</p>}
+      {serverError && <p className="text-sm text-red-400">{serverError}</p>}
       <Button type="submit" disabled={form.formState.isSubmitting}>
         {form.formState.isSubmitting ? "Saving…" : "Create buyer"}
       </Button>

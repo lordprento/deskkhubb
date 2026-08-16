@@ -63,7 +63,7 @@ export function DealForm({ markets }: { markets: MarketOption[] }) {
           <Label htmlFor="address">Property address</Label>
           <Input id="address" {...form.register("address")} />
           {form.formState.errors.address && (
-            <p className="text-xs text-red-700">
+            <p className="text-xs text-red-400">
               {form.formState.errors.address.message}
             </p>
           )}
@@ -131,7 +131,7 @@ export function DealForm({ markets }: { markets: MarketOption[] }) {
       </div>
 
       <div>
-        <h3 className="mb-3 text-sm font-semibold text-stone-800">
+        <h3 className="mb-3 font-inter text-sm font-semibold tracking-tight text-slate-100">
           Underwriting
         </h3>
         <div className="grid gap-4 sm:grid-cols-3">
@@ -168,13 +168,13 @@ export function DealForm({ markets }: { markets: MarketOption[] }) {
         <Textarea id="notes" {...form.register("notes")} />
       </div>
 
-      {serverError && <p className="text-sm text-red-700">{serverError}</p>}
+      {serverError && <p className="text-sm text-red-400">{serverError}</p>}
 
       <div className="flex items-center gap-3">
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? "Saving…" : "Create deal"}
         </Button>
-        <p className="text-xs text-stone-500">
+        <p className="text-xs text-slate-400">
           DRAFT — not legal advice. Attorney/title review required.
         </p>
       </div>

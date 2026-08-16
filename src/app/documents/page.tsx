@@ -21,14 +21,14 @@ export default function DocumentsPage() {
               <CardTitle>{t.name}</CardTitle>
             </CardHeader>
             <CardContent>
-              <pre className="whitespace-pre-wrap rounded-md bg-stone-100 p-3 text-xs leading-relaxed text-stone-800">
+              <pre className="whitespace-pre-wrap rounded-md border border-white/10 bg-slate-950/60 p-3 font-mono text-xs leading-relaxed text-slate-200 backdrop-blur-sm">
                 {withDisclaimer(t.body)}
               </pre>
             </CardContent>
           </Card>
         ))}
       </div>
-      <p className="text-xs text-stone-500">
+      <p className="text-xs text-slate-400">
         Generate a filled Buyer Blast from any deal detail page.
       </p>
     </div>

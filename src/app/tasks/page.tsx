@@ -3,6 +3,14 @@ import { format } from "date-fns";
 import { prisma } from "@/lib/db";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 
@@ -20,43 +28,47 @@ export default async function TasksPage() {
       </div>
       <Card>
         <CardContent className="p-0">
-          <table>
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Deal</th>
-                <th>Due</th>
-                <th>Priority</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Title</TableHead>
+                <TableHead>Deal</TableHead>
+                <TableHead>Due</TableHead>
+                <TableHead>Priority</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {tasks.map((t) => (
-                <tr key={t.id}>
-                  <td className="font-medium">{t.title}</td>
-                  <td>
+                <TableRow key={t.id}>
+                  <TableCell className="font-medium text-slate-50">
+                    {t.title}
+                  </TableCell>
+                  <TableCell>
                     {t.deal ? (
                       <Link
                         href={`/deals/${t.deal.id}`}
-                        className="hover:underline"
+                        className="transition-colors hover:text-sky-300"
                       >
                         {t.deal.address}
                       </Link>
                     ) : (
                       "—"
                     )}
-                  </td>
-                  <td>{t.dueAt ? format(t.dueAt, "MMM d, yyyy") : "—"}</td>
-                  <td>
+                  </TableCell>
+                  <TableCell>
+                    {t.dueAt ? format(t.dueAt, "MMM d, yyyy") : "—"}
+                  </TableCell>
+                  <TableCell>
                     <Badge variant="outline">{t.priority}</Badge>
-                  </td>
-                  <td>
+                  </TableCell>
+                  <TableCell>
                     <Badge variant="secondary">{t.status}</Badge>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>
