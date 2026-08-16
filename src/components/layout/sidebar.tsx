@@ -71,9 +71,18 @@ export function Sidebar() {
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 shrink-0"
-          onClick={() => setCollapsed((v) => !v)}
+          className="h-8 w-8 shrink-0 text-slate-300 hover:text-white"
+          onClick={() => {
+            setCollapsed((prev) => {
+              const next = !prev;
+              // When collapsing while the pointer is still over the rail,
+              // clear hover so icon mode shows until the mouse leaves/re-enters.
+              if (next) setHovered(false);
+              return next;
+            });
+          }}
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-expanded={expanded}
         >
           {collapsed ? (
             <PanelLeftOpen className="h-4 w-4" />
