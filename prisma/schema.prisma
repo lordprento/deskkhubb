@@ -1,0 +1,210 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum DealStatus {
+  LEAD
+  ANALYZING
+  OFFERED
+  UNDER_CONTRACT
+  ASSIGNED
+  CLOSED
+  DEAD
+}
+
+enum TaskStatus {
+  OPEN
+  DONE
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum OfferStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+enum FundingType {
+  CASH
+  HARD_MONEY
+  CONVENTIONAL
+  PRIVATE
+  UNKNOWN
+}
+
+enum LeadKind {
+  CASH_BUYER
+  TAX_DELINQUENT
+  ABSENTEE
+  PROBATE
+}
+
+enum LegalStatus {
+  PERMISSIVE
+  LICENSE_REQUIRED
+  PROHIBITED
+  UNKNOWN
+}
+
+model Market {
+  id        String   @id @default(cuid())
+  name      String
+  state     String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deals     Deal[]
+  buyers    Buyer[]
+  scrapedLeads ScrapedLead[]
+  canadianBuyers CanadianBuyerLead[]
+  marketIntel MarketIntel?
+}
+
+model Deal {
+  id                 String     @id @default(cuid())
+  marketId           String
+  market             Market     @relation(fields: [marketId], references: [id])
+  address            String
+  city               String
+  state              String
+  zip                String
+  status             DealStatus @default(LEAD)
+  listPrice          Float?
+  arv                Float?
+  rehabCost          Float?
+  sellerAsk          Float?
+  offerPrice         Float?
+  assignmentFee      Float?
+  buyerDesiredProfit Float?
+  buyBoxPct          Float?     @default(0.7)
+  beds               Float?
+  baths              Float?
+  sqft               Int?
+  notes              String?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  tasks              Task[]
+  activities         Activity[]
+  offers             Offer[]
+}
+
+model Buyer {
+  id        String      @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  marketId  String?
+  market    Market?     @relation(fields: [marketId], references: [id])
+  buyBoxMin Float?
+  buyBoxMax Float?
+  maxRehab  Float?
+  funding   FundingType @default(UNKNOWN)
+  notes     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  offers    Offer[]
+  activities Activity[]
+}
+
+model Task {
+  id        String       @id @default(cuid())
+  dealId    String?
+  deal      Deal?        @relation(fields: [dealId], references: [id])
+  title     String
+  dueAt     DateTime?
+  status    TaskStatus   @default(OPEN)
+  priority  TaskPriority @default(MEDIUM)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  dealId    String?
+  deal      Deal?    @relation(fields: [dealId], references: [id])
+  buyerId   String?
+  buyer     Buyer?   @relation(fields: [buyerId], references: [id])
+  type      String
+  body      String
+  createdAt DateTime @default(now())
+}
+
+model Offer {
+  id        String      @id @default(cuid())
+  dealId    String
+  deal      Deal        @relation(fields: [dealId], references: [id])
+  buyerId   String?
+  buyer     Buyer?      @relation(fields: [buyerId], references: [id])
+  amount    Float
+  status    OfferStatus @default(DRAFT)
+  notes     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model ScrapedLead {
+  id            String   @id @default(cuid())
+  marketId      String?
+  market        Market?  @relation(fields: [marketId], references: [id])
+  kind          LeadKind
+  sourceUrl     String
+  sourceName    String
+  recordedAt    DateTime?
+  partyName     String?
+  mailingAddress String?
+  propertyAddress String?
+  city          String?
+  state         String?
+  zip           String?
+  amount        Float?
+  documentType  String?
+  rawJson       String?
+  createdAt     DateTime @default(now())
+}
+
+model CanadianBuyerLead {
+  id            String   @id @default(cuid())
+  marketId      String?
+  market        Market?  @relation(fields: [marketId], references: [id])
+  name          String
+  email         String?
+  phone         String?
+  province      String?
+  mailingAddress String?
+  buyBoxMin     Float?
+  buyBoxMax     Float?
+  maxRehab      Float?
+  funding       FundingType @default(CASH)
+  sourceUrl     String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model MarketIntel {
+  id                 String      @id @default(cuid())
+  marketId           String      @unique
+  market             Market      @relation(fields: [marketId], references: [id])
+  legalStatus        LegalStatus @default(UNKNOWN)
+  buyerActivityScore Float?
+  sellerActivityScore Float?
+  competitorNoise    Int?
+  notes              String?
+  sourceSummary      String?
+  fetchedAt          DateTime?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+}
