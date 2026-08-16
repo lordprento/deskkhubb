@@ -2,6 +2,14 @@ import { prisma } from "@/lib/db";
 import { formatMoney } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 
@@ -21,48 +29,50 @@ export default async function CanadianBuyersPage() {
       </div>
       <Card>
         <CardContent className="p-0">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Market</th>
-                <th>Province</th>
-                <th>Funding</th>
-                <th>Buy box</th>
-                <th>Max rehab</th>
-                <th>Source</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Market</TableHead>
+                <TableHead>Province</TableHead>
+                <TableHead>Funding</TableHead>
+                <TableHead>Buy box</TableHead>
+                <TableHead>Max rehab</TableHead>
+                <TableHead>Source</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {leads.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="text-stone-500">
+                <TableRow>
+                  <TableCell colSpan={7} className="text-slate-400">
                     No Canadian buyer leads yet — run scrape:buyers.
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               )}
               {leads.map((b) => (
-                <tr key={b.id}>
-                  <td className="font-medium">{b.name}</td>
-                  <td>{b.market?.name ?? "—"}</td>
-                  <td>{b.province ?? "—"}</td>
-                  <td>
+                <TableRow key={b.id}>
+                  <TableCell className="font-medium text-slate-50">
+                    {b.name}
+                  </TableCell>
+                  <TableCell>{b.market?.name ?? "—"}</TableCell>
+                  <TableCell>{b.province ?? "—"}</TableCell>
+                  <TableCell>
                     <Badge variant="secondary">{b.funding}</Badge>
-                  </td>
-                  <td>
+                  </TableCell>
+                  <TableCell>
                     {formatMoney(b.buyBoxMin)} – {formatMoney(b.buyBoxMax)}
-                  </td>
-                  <td>{formatMoney(b.maxRehab)}</td>
-                  <td className="max-w-[220px] truncate text-xs text-stone-500">
+                  </TableCell>
+                  <TableCell>{formatMoney(b.maxRehab)}</TableCell>
+                  <TableCell className="max-w-[220px] truncate text-xs text-slate-400">
                     {b.sourceUrl ?? b.notes ?? "—"}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
-      <p className="text-xs text-stone-500">
+      <p className="text-xs text-slate-400">
         DRAFT — not legal advice. Attorney/title review required.
       </p>
     </div>

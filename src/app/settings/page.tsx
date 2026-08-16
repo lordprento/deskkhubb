@@ -11,11 +11,11 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle>Defaults</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2 text-sm text-stone-700">
+        <CardContent className="space-y-2 text-sm text-slate-300">
           <p>Database: SQLite (`dev.db`)</p>
           <p>Default buy box: 70% of ARV</p>
           <p>Default assignment fee target: $10,000</p>
-          <p className="pt-2 text-xs text-stone-500">
+          <p className="pt-2 text-xs text-slate-400">
             DRAFT — not legal advice. Attorney/title review required.
           </p>
         </CardContent>

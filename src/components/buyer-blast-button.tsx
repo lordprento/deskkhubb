@@ -48,8 +48,8 @@ export function BuyerBlastButton({ dealId }: { dealId: string }) {
         </div>
       </CardHeader>
       <CardContent>
-        {error && <p className="mb-2 text-sm text-red-700">{error}</p>}
-        <pre className="max-h-80 overflow-auto whitespace-pre-wrap rounded-md bg-stone-100 p-3 text-xs leading-relaxed text-stone-800">
+        {error && <p className="mb-2 text-sm text-red-400">{error}</p>}
+        <pre className="max-h-80 overflow-auto whitespace-pre-wrap rounded-md border border-white/10 bg-slate-950/60 p-3 font-mono text-xs leading-relaxed text-slate-200 backdrop-blur-sm">
           {content ??
             "One-click generate fills {{property_address}} tokens from this deal and appends the legal disclaimer."}
         </pre>

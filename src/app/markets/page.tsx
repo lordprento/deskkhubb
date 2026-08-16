@@ -1,6 +1,14 @@
 import { prisma } from "@/lib/db";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 
@@ -20,30 +28,32 @@ export default async function MarketsPage() {
       </div>
       <Card>
         <CardContent className="p-0">
-          <table>
-            <thead>
-              <tr>
-                <th>Market</th>
-                <th>State</th>
-                <th>Slug</th>
-                <th>Deals</th>
-                <th>Buyers</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Market</TableHead>
+                <TableHead>State</TableHead>
+                <TableHead>Slug</TableHead>
+                <TableHead>Deals</TableHead>
+                <TableHead>Buyers</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {markets.map((m) => (
-                <tr key={m.id}>
-                  <td className="font-medium">{m.name}</td>
-                  <td>
+                <TableRow key={m.id}>
+                  <TableCell className="font-medium text-slate-50">
+                    {m.name}
+                  </TableCell>
+                  <TableCell>
                     <Badge variant="secondary">{m.state}</Badge>
-                  </td>
-                  <td className="font-mono text-xs">{m.slug}</td>
-                  <td>{m._count.deals}</td>
-                  <td>{m._count.buyers}</td>
-                </tr>
+                  </TableCell>
+                  <TableCell className="font-mono text-xs">{m.slug}</TableCell>
+                  <TableCell>{m._count.deals}</TableCell>
+                  <TableCell>{m._count.buyers}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

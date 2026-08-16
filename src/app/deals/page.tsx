@@ -5,6 +5,14 @@ import { formatMoney, formatPct } from "@/lib/utils";
 import { HealthBadge } from "@/components/health-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 
@@ -30,53 +38,53 @@ export default async function DealsPage() {
 
       <Card>
         <CardContent className="p-0">
-          <table>
-            <thead>
-              <tr>
-                <th>Address</th>
-                <th>Market</th>
-                <th>Status</th>
-                <th>ARV</th>
-                <th>MAO</th>
-                <th>Seller max</th>
-                <th>Fee</th>
-                <th>Disc.</th>
-                <th>Health</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Address</TableHead>
+                <TableHead>Market</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>ARV</TableHead>
+                <TableHead>MAO</TableHead>
+                <TableHead>Seller max</TableHead>
+                <TableHead>Fee</TableHead>
+                <TableHead>Disc.</TableHead>
+                <TableHead>Health</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {deals.map((d) => {
                 const u = underwriteDeal(d);
                 return (
-                  <tr key={d.id}>
-                    <td>
+                  <TableRow key={d.id}>
+                    <TableCell>
                       <Link
                         href={`/deals/${d.id}`}
-                        className="font-medium hover:underline"
+                        className="font-medium text-slate-50 transition-colors hover:text-sky-300"
                       >
                         {d.address}
                       </Link>
-                      <div className="text-xs text-stone-500">
+                      <div className="text-xs text-slate-400">
                         {d.city}, {d.state}
                       </div>
-                    </td>
-                    <td>{d.market.name}</td>
-                    <td>{d.status}</td>
-                    <td>{formatMoney(d.arv)}</td>
-                    <td className="font-medium">
+                    </TableCell>
+                    <TableCell>{d.market.name}</TableCell>
+                    <TableCell>{d.status}</TableCell>
+                    <TableCell>{formatMoney(d.arv)}</TableCell>
+                    <TableCell className="font-medium text-slate-50">
                       {formatMoney(u.buyerMaxPurchasePrice)}
-                    </td>
-                    <td>{formatMoney(u.maxSellerOffer)}</td>
-                    <td>{formatMoney(u.assignmentFee)}</td>
-                    <td>{formatPct(u.discountToList)}</td>
-                    <td>
+                    </TableCell>
+                    <TableCell>{formatMoney(u.maxSellerOffer)}</TableCell>
+                    <TableCell>{formatMoney(u.assignmentFee)}</TableCell>
+                    <TableCell>{formatPct(u.discountToList)}</TableCell>
+                    <TableCell>
                       <HealthBadge health={u.health} />
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 );
               })}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

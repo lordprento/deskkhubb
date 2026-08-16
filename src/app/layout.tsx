@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Sidebar } from "@/components/layout/sidebar";
 import "./globals.css";
 
-const body = IBM_Plex_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body",
-});
-
-const display = IBM_Plex_Serif({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  variable: "--font-display",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -27,11 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${body.variable} ${display.variable} antialiased`}>
+      <body className={`${inter.variable} font-inter antialiased`}>
         <div className="flex min-h-screen">
           <Sidebar />
           <main className="min-w-0 flex-1 overflow-auto">
-            <div className="mx-auto max-w-6xl px-6 py-6">{children}</div>
+            <div className="mx-auto max-w-6xl px-6 py-6 text-sm">{children}</div>
           </main>
         </div>
       </body>

@@ -10,6 +10,14 @@ import { BuyerBlastButton } from "@/components/buyer-blast-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +54,7 @@ export default async function DealDetailPage({
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.14em] text-stone-500">
+          <p className="text-xs uppercase tracking-[0.14em] text-slate-400">
             {deal.market.name} · {deal.status}
           </p>
           <h1 className="page-title">{deal.address}</h1>
@@ -75,10 +83,10 @@ export default async function DealDetailPage({
         ].map(([label, value]) => (
           <Card key={label as string}>
             <CardContent className="p-4">
-              <p className="text-[11px] uppercase tracking-wide text-stone-500">
+              <p className="text-[11px] uppercase tracking-wide text-slate-400">
                 {label}
               </p>
-              <p className="mt-1 font-[family-name:var(--font-display)] text-xl font-semibold">
+              <p className="mt-1 font-inter text-xl font-semibold tracking-tight text-slate-50">
                 {value}
               </p>
             </CardContent>
@@ -91,37 +99,39 @@ export default async function DealDetailPage({
           <CardTitle>Matched buyers</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <table>
-            <thead>
-              <tr>
-                <th>Buyer</th>
-                <th>Score</th>
-                <th>Funding</th>
-                <th>Why</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Buyer</TableHead>
+                <TableHead>Score</TableHead>
+                <TableHead>Funding</TableHead>
+                <TableHead>Why</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {ranked.map((b) => (
-                <tr key={b.id}>
-                  <td className="font-medium">{b.name}</td>
-                  <td>{b.score.toFixed(0)}</td>
-                  <td>
+                <TableRow key={b.id}>
+                  <TableCell className="font-medium text-slate-50">
+                    {b.name}
+                  </TableCell>
+                  <TableCell>{b.score.toFixed(0)}</TableCell>
+                  <TableCell>
                     <Badge variant="secondary">{b.funding ?? "—"}</Badge>
-                  </td>
-                  <td className="text-xs text-stone-600">
+                  </TableCell>
+                  <TableCell className="text-xs text-slate-400">
                     {b.reasons.join(" · ")}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
               {ranked.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="text-stone-500">
+                <TableRow>
+                  <TableCell colSpan={4} className="text-slate-400">
                     No buyers to rank
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 
@@ -132,10 +142,10 @@ export default async function DealDetailPage({
           <CardTitle>Notes</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-stone-700 whitespace-pre-wrap">
+          <p className="whitespace-pre-wrap text-sm text-slate-300">
             {deal.notes || "No notes yet."}
           </p>
-          <p className="mt-4 text-xs text-stone-500">
+          <p className="mt-4 text-xs text-slate-400">
             DRAFT — not legal advice. Attorney/title review required.
           </p>
         </CardContent>
@@ -147,33 +157,35 @@ export default async function DealDetailPage({
             <CardTitle>Tasks</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <table>
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Due</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Due</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {deal.tasks.map((t) => (
-                  <tr key={t.id}>
-                    <td>{t.title}</td>
-                    <td>{t.dueAt ? format(t.dueAt, "MMM d") : "—"}</td>
-                    <td>
+                  <TableRow key={t.id}>
+                    <TableCell>{t.title}</TableCell>
+                    <TableCell>
+                      {t.dueAt ? format(t.dueAt, "MMM d") : "—"}
+                    </TableCell>
+                    <TableCell>
                       <Badge variant="secondary">{t.status}</Badge>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
                 {deal.tasks.length === 0 && (
-                  <tr>
-                    <td colSpan={3} className="text-stone-500">
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-slate-400">
                       No tasks
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
 
@@ -185,19 +197,19 @@ export default async function DealDetailPage({
             {deal.activities.map((a) => (
               <div
                 key={a.id}
-                className="border-b border-stone-100 pb-2 last:border-0"
+                className="border-b border-white/10 pb-2 last:border-0"
               >
                 <div className="flex items-center justify-between gap-2">
                   <Badge variant="outline">{a.type}</Badge>
-                  <span className="text-xs text-stone-500">
+                  <span className="text-xs text-slate-400">
                     {format(a.createdAt, "MMM d, h:mm a")}
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-stone-700">{a.body}</p>
+                <p className="mt-1 text-sm text-slate-300">{a.body}</p>
               </div>
             ))}
             {deal.activities.length === 0 && (
-              <p className="text-sm text-stone-500">No activity yet.</p>
+              <p className="text-sm text-slate-400">No activity yet.</p>
             )}
           </CardContent>
         </Card>
