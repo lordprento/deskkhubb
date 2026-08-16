@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { prisma } from "@/lib/db";
 import { underwriteDeal } from "@/lib/deal-math";
+import { matchBuyers } from "@/lib/match-buyers";
 import { formatMoney, formatPct } from "@/lib/utils";
 import { HealthBadge } from "@/components/health-badge";
 import { Badge } from "@/components/ui/badge";
@@ -28,7 +29,17 @@ export default async function DealDetailPage({
   });
   if (!deal) notFound();
 
+  const buyers = await prisma.buyer.findMany();
   const u = underwriteDeal(deal);
+  const ranked = matchBuyers(
+    {
+      marketId: deal.marketId,
+      offerPrice: u.maxSellerOffer ?? deal.offerPrice,
+      rehabCost: deal.rehabCost,
+      arv: deal.arv,
+    },
+    buyers,
+  ).slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -73,6 +84,45 @@ export default async function DealDetailPage({
           </Card>
         ))}
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Matched buyers</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <table>
+            <thead>
+              <tr>
+                <th>Buyer</th>
+                <th>Score</th>
+                <th>Funding</th>
+                <th>Why</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ranked.map((b) => (
+                <tr key={b.id}>
+                  <td className="font-medium">{b.name}</td>
+                  <td>{b.score.toFixed(0)}</td>
+                  <td>
+                    <Badge variant="secondary">{b.funding ?? "—"}</Badge>
+                  </td>
+                  <td className="text-xs text-stone-600">
+                    {b.reasons.join(" · ")}
+                  </td>
+                </tr>
+              ))}
+              {ranked.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="text-stone-500">
+                    No buyers to rank
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
@@ -130,7 +180,10 @@ export default async function DealDetailPage({
           </CardHeader>
           <CardContent className="space-y-3">
             {deal.activities.map((a) => (
-              <div key={a.id} className="border-b border-stone-100 pb-2 last:border-0">
+              <div
+                key={a.id}
+                className="border-b border-stone-100 pb-2 last:border-0"
+              >
                 <div className="flex items-center justify-between gap-2">
                   <Badge variant="outline">{a.type}</Badge>
                   <span className="text-xs text-stone-500">

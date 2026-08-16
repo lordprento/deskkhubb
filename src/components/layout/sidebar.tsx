@@ -9,6 +9,7 @@ import {
   FileText,
   Gavel,
   LayoutList,
+  Radar,
   Settings,
   Users,
   MapPinned,
@@ -20,7 +21,9 @@ const nav = [
   { href: "/deals", label: "Pipeline", icon: LayoutList },
   { href: "/deals", label: "Deals", icon: CircleDollarSign },
   { href: "/buyers", label: "Buyers", icon: Users },
+  { href: "/buyers/canadian", label: "Canadian", icon: Users },
   { href: "/tasks", label: "Tasks", icon: Gavel },
+  { href: "/scraper", label: "Scraper", icon: Radar },
   { href: "/documents", label: "Documents", icon: FileText },
   { href: "/markets", label: "Markets", icon: MapPinned },
   { href: "/settings", label: "Settings", icon: Settings },
@@ -44,11 +47,14 @@ export function Sidebar() {
           </div>
         </div>
       </div>
-      <nav className="flex-1 space-y-0.5 p-3">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
         {nav.map((item) => {
           const active =
             pathname === item.href ||
-            (item.href !== "/today" && pathname.startsWith(item.href));
+            (item.href !== "/today" &&
+              item.href !== "/buyers" &&
+              pathname.startsWith(item.href)) ||
+            (item.href === "/buyers" && pathname === "/buyers");
           const Icon = item.icon;
           return (
             <Link

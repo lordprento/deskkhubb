@@ -13,6 +13,9 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
+    "scrape:buyers": "tsx scripts/scrape-buyers.ts",
+    "scrape:sellers": "tsx scripts/scrape-sellers.ts",
+    "scrape:probate": "tsx scripts/scrape-probate.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -51,6 +54,7 @@
     "eslint": "^9",
     "eslint-config-next": "^16.3.1",
     "jsdom": "^29.1.1",
+    "playwright": "^1.62.1",
     "prisma": "^7.9.1",
     "tailwindcss": "^4",
     "tsx": "^4.23.12",

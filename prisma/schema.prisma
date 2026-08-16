@@ -45,6 +45,20 @@ enum FundingType {
   UNKNOWN
 }
 
+enum LeadKind {
+  CASH_BUYER
+  TAX_DELINQUENT
+  ABSENTEE
+  PROBATE
+}
+
+enum LegalStatus {
+  PERMISSIVE
+  LICENSE_REQUIRED
+  PROHIBITED
+  UNKNOWN
+}
+
 model Market {
   id        String   @id @default(cuid())
   name      String
@@ -54,6 +68,9 @@ model Market {
   updatedAt DateTime @updatedAt
   deals     Deal[]
   buyers    Buyer[]
+  scrapedLeads ScrapedLead[]
+  canadianBuyers CanadianBuyerLead[]
+  marketIntel MarketIntel?
 }
 
 model Deal {
@@ -136,4 +153,58 @@ model Offer {
   notes     String?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
+}
+
+model ScrapedLead {
+  id            String   @id @default(cuid())
+  marketId      String?
+  market        Market?  @relation(fields: [marketId], references: [id])
+  kind          LeadKind
+  sourceUrl     String
+  sourceName    String
+  recordedAt    DateTime?
+  partyName     String?
+  mailingAddress String?
+  propertyAddress String?
+  city          String?
+  state         String?
+  zip           String?
+  amount        Float?
+  documentType  String?
+  rawJson       String?
+  createdAt     DateTime @default(now())
+}
+
+model CanadianBuyerLead {
+  id            String   @id @default(cuid())
+  marketId      String?
+  market        Market?  @relation(fields: [marketId], references: [id])
+  name          String
+  email         String?
+  phone         String?
+  province      String?
+  mailingAddress String?
+  buyBoxMin     Float?
+  buyBoxMax     Float?
+  maxRehab      Float?
+  funding       FundingType @default(CASH)
+  sourceUrl     String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model MarketIntel {
+  id                 String      @id @default(cuid())
+  marketId           String      @unique
+  market             Market      @relation(fields: [marketId], references: [id])
+  legalStatus        LegalStatus @default(UNKNOWN)
+  buyerActivityScore Float?
+  sellerActivityScore Float?
+  competitorNoise    Int?
+  notes              String?
+  sourceSummary      String?
+  fetchedAt          DateTime?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
 }

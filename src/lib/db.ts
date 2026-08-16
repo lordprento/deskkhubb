@@ -20,3 +20,9 @@ export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
+
+// Helpful during schema migrations in long-lived dev servers
+if (!(prisma as { canadianBuyerLead?: unknown }).canadianBuyerLead) {
+  globalForPrisma.prisma = createPrismaClient();
+}
+
