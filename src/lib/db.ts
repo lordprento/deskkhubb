@@ -15,14 +15,16 @@ function createPrismaClient() {
   return new PrismaClient({ adapter });
 }
 
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
+function getClient() {
+  const existing = globalForPrisma.prisma;
+  if (existing && (existing as { canadianBuyerLead?: unknown }).canadianBuyerLead) {
+    return existing;
+  }
+  const client = createPrismaClient();
+  if (process.env.NODE_ENV !== "production") {
+    globalForPrisma.prisma = client;
+  }
+  return client;
 }
 
-// Helpful during schema migrations in long-lived dev servers
-if (!(prisma as { canadianBuyerLead?: unknown }).canadianBuyerLead) {
-  globalForPrisma.prisma = createPrismaClient();
-}
-
+export const prisma = getClient();

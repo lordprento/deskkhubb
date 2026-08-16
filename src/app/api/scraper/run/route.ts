@@ -8,6 +8,7 @@ const SCRIPTS = {
   buyers: "scripts/scrape-buyers.ts",
   sellers: "scripts/scrape-sellers.ts",
   probate: "scripts/scrape-probate.ts",
+  intel: "scripts/scrape-intel.ts",
 } as const;
 
 type Job = keyof typeof SCRIPTS;

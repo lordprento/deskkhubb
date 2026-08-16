@@ -16,6 +16,7 @@
     "scrape:buyers": "tsx scripts/scrape-buyers.ts",
     "scrape:sellers": "tsx scripts/scrape-sellers.ts",
     "scrape:probate": "tsx scripts/scrape-probate.ts",
+    "scrape:intel": "tsx scripts/scrape-intel.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

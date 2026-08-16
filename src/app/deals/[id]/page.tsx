@@ -6,6 +6,7 @@ import { underwriteDeal } from "@/lib/deal-math";
 import { matchBuyers } from "@/lib/match-buyers";
 import { formatMoney, formatPct } from "@/lib/utils";
 import { HealthBadge } from "@/components/health-badge";
+import { BuyerBlastButton } from "@/components/buyer-blast-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -123,6 +124,8 @@ export default async function DealDetailPage({
           </table>
         </CardContent>
       </Card>
+
+      <BuyerBlastButton dealId={deal.id} />
 
       <Card>
         <CardHeader>

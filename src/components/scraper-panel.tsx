@@ -28,7 +28,7 @@ export function ScraperPanel({ markets }: { markets: MarketOption[] }) {
     [running, marketSlug],
   );
 
-  async function run(job: "buyers" | "sellers" | "probate") {
+  async function run(job: "buyers" | "sellers" | "probate" | "intel") {
     setRunning(job);
     setLog("");
     try {
@@ -97,10 +97,18 @@ export function ScraperPanel({ markets }: { markets: MarketOption[] }) {
             >
               {running === "probate" ? "Running…" : "Scrape probate"}
             </Button>
+            <Button
+              variant="outline"
+              disabled={disabled}
+              onClick={() => run("intel")}
+            >
+              {running === "intel" ? "Running…" : "Scrape market intel"}
+            </Button>
           </div>
           <p className="text-xs text-stone-500">
-            Sources limited to public county / court hosts. Never Zillow, Redfin,
-            or MLS. CSV lands in <code>./output/</code>.
+            County/court hosts for lead scrapers (never Zillow/Redfin/MLS). Intel
+            uses state RE commission pages, Census/HUD public APIs, and public
+            forum search. CSV lands in <code>./output/</code>.
           </p>
         </CardContent>
       </Card>

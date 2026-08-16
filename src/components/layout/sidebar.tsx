@@ -11,6 +11,7 @@ import {
   LayoutList,
   Radar,
   Settings,
+  Sparkles,
   Users,
   MapPinned,
 } from "lucide-react";
@@ -24,6 +25,7 @@ const nav = [
   { href: "/buyers/canadian", label: "Canadian", icon: Users },
   { href: "/tasks", label: "Tasks", icon: Gavel },
   { href: "/scraper", label: "Scraper", icon: Radar },
+  { href: "/intelligence", label: "Intelligence", icon: Sparkles },
   { href: "/documents", label: "Documents", icon: FileText },
   { href: "/markets", label: "Markets", icon: MapPinned },
   { href: "/settings", label: "Settings", icon: Settings },
