@@ -1,0 +1,217 @@
+{
+  "state": "IN",
+  "marketSlug": "indianapolis",
+  "defaultCounty": "marion",
+  "counties": [
+    {
+      "name": "Marion",
+      "slug": "marion",
+      "fipsCode": "18097",
+      "primaryCity": "Indianapolis",
+      "zipPrefix": "462",
+      "recorderUrl": "https://www.indy.gov/agency/marion-county-recorder",
+      "assessorUrl": "https://www.indy.gov/agency/marion-county-assessor",
+      "treasurerUrl": "https://www.indy.gov/agency/marion-county-treasurer",
+      "courtUrl": "https://public.courts.in.gov/",
+      "selectors": {
+        "resultRow": "table.deed-results tbody tr",
+        "partyName": "td.grantee",
+        "propertyAddress": "td.property-address",
+        "amount": "td.consideration",
+        "documentType": "td.doc-type",
+        "recordedAt": "td.recorded-date",
+        "parcelId": "td.parcel-number",
+        "nextPage": "a.pagination-next"
+      }
+    },
+    {
+      "name": "Lake",
+      "slug": "lake",
+      "fipsCode": "18089",
+      "primaryCity": "Crown Point",
+      "zipPrefix": "463",
+      "recorderUrl": "https://www.lakecountyin.org/portal/group/recorder",
+      "assessorUrl": "https://www.lakecountyin.org/portal/group/assessor",
+      "treasurerUrl": "https://www.lakecountyin.org/portal/group/treasurer",
+      "courtUrl": "https://public.courts.in.gov/",
+      "selectors": {
+        "resultRow": "#recorded-documents tbody tr",
+        "partyName": "td:nth-child(2)",
+        "propertyAddress": "td:nth-child(3)",
+        "amount": "td:nth-child(5)",
+        "documentType": "td:nth-child(4)",
+        "recordedAt": "td:nth-child(1)",
+        "parcelId": "td:nth-child(6)",
+        "nextPage": "li.next > a"
+      }
+    },
+    {
+      "name": "Allen",
+      "slug": "allen",
+      "fipsCode": "18003",
+      "primaryCity": "Fort Wayne",
+      "zipPrefix": "468",
+      "recorderUrl": "https://www.allencounty.us/recorder",
+      "assessorUrl": "https://www.allencounty.us/assessor",
+      "treasurerUrl": "https://www.allencounty.us/treasurer",
+      "courtUrl": "https://public.courts.in.gov/",
+      "selectors": {
+        "resultRow": "table.searchResults tr.dataRow",
+        "partyName": "td.nameCol",
+        "propertyAddress": "td.addressCol",
+        "amount": "td.amountCol",
+        "documentType": "td.typeCol",
+        "recordedAt": "td.dateCol",
+        "parcelId": "td.parcelCol",
+        "nextPage": "a[rel='next']"
+      }
+    },
+    {
+      "name": "Hamilton",
+      "slug": "hamilton",
+      "fipsCode": "18057",
+      "primaryCity": "Noblesville",
+      "zipPrefix": "460",
+      "recorderUrl": "https://www.hamiltoncounty.in.gov/158/Recorder",
+      "assessorUrl": "https://www.hamiltoncounty.in.gov/165/Assessor",
+      "treasurerUrl": "https://www.hamiltoncounty.in.gov/166/Treasurer",
+      "courtUrl": "https://public.courts.in.gov/",
+      "selectors": {
+        "resultRow": "div.recordSet table tbody tr",
+        "partyName": "td:nth-child(1)",
+        "propertyAddress": "td:nth-child(2)",
+        "amount": "td:nth-child(4)",
+        "documentType": "td:nth-child(3)",
+        "recordedAt": "td:nth-child(5)",
+        "parcelId": "td:nth-child(6)",
+        "nextPage": "a.nextPageLink"
+      }
+    },
+    {
+      "name": "St. Joseph",
+      "slug": "st-joseph",
+      "fipsCode": "18141",
+      "primaryCity": "South Bend",
+      "zipPrefix": "466",
+      "recorderUrl": "https://www.stjosephcountyin.gov/departments/recorder",
+      "assessorUrl": "https://www.stjosephcountyin.gov/departments/assessor",
+      "treasurerUrl": "https://www.stjosephcountyin.gov/departments/treasurer",
+      "courtUrl": "https://public.courts.in.gov/",
+      "selectors": {
+        "resultRow": "table#docTable tbody tr",
+        "partyName": "td[data-col='grantee']",
+        "propertyAddress": "td[data-col='address']",
+        "amount": "td[data-col='amount']",
+        "documentType": "td[data-col='instrument']",
+        "recordedAt": "td[data-col='recorded']",
+        "parcelId": "td[data-col='parcel']",
+        "nextPage": "button.next-page"
+      }
+    },
+    {
+      "name": "Elkhart",
+      "slug": "elkhart",
+      "fipsCode": "18039",
+      "primaryCity": "Elkhart",
+      "zipPrefix": "465",
+      "recorderUrl": "https://www.elkhartcounty.com/en/government/recorder/",
+      "assessorUrl": "https://www.elkhartcounty.com/en/government/assessor/",
+      "treasurerUrl": "https://www.elkhartcounty.com/en/government/treasurer/",
+      "courtUrl": "https://public.courts.in.gov/",
+      "selectors": {
+        "resultRow": "section.results ul.record-list li",
+        "partyName": "span.party",
+        "propertyAddress": "span.address",
+        "amount": "span.consideration",
+        "documentType": "span.doc-kind",
+        "recordedAt": "time.recorded",
+        "parcelId": "span.parcel",
+        "nextPage": "a.more-results"
+      }
+    },
+    {
+      "name": "Tippecanoe",
+      "slug": "tippecanoe",
+      "fipsCode": "18157",
+      "primaryCity": "Lafayette",
+      "zipPrefix": "479",
+      "recorderUrl": "https://www.tippecanoe.in.gov/158/Recorder",
+      "assessorUrl": "https://www.tippecanoe.in.gov/162/Assessor",
+      "treasurerUrl": "https://www.tippecanoe.in.gov/165/Treasurer",
+      "courtUrl": "https://public.courts.in.gov/",
+      "selectors": {
+        "resultRow": "table.civicTable tbody tr",
+        "partyName": "td:nth-child(2)",
+        "propertyAddress": "td:nth-child(4)",
+        "amount": "td:nth-child(5)",
+        "documentType": "td:nth-child(3)",
+        "recordedAt": "td:nth-child(1)",
+        "parcelId": "td:nth-child(6)",
+        "nextPage": "a.civicNext"
+      }
+    },
+    {
+      "name": "Porter",
+      "slug": "porter",
+      "fipsCode": "18127",
+      "primaryCity": "Valparaiso",
+      "zipPrefix": "463",
+      "recorderUrl": "https://www.porterco.org/158/Recorder",
+      "assessorUrl": "https://www.porterco.org/162/Assessor",
+      "treasurerUrl": "https://www.porterco.org/165/Treasurer",
+      "courtUrl": "https://public.courts.in.gov/",
+      "selectors": {
+        "resultRow": "table.civicTable tbody tr",
+        "partyName": "td:nth-child(2)",
+        "propertyAddress": "td:nth-child(4)",
+        "amount": "td:nth-child(5)",
+        "documentType": "td:nth-child(3)",
+        "recordedAt": "td:nth-child(1)",
+        "parcelId": "td:nth-child(6)",
+        "nextPage": "a.civicNext"
+      }
+    },
+    {
+      "name": "Hendricks",
+      "slug": "hendricks",
+      "fipsCode": "18063",
+      "primaryCity": "Danville",
+      "zipPrefix": "461",
+      "recorderUrl": "https://www.co.hendricks.in.us/department/index.php?structureid=15",
+      "assessorUrl": "https://www.co.hendricks.in.us/department/index.php?structureid=3",
+      "treasurerUrl": "https://www.co.hendricks.in.us/department/index.php?structureid=21",
+      "courtUrl": "https://public.courts.in.gov/",
+      "selectors": {
+        "resultRow": "div#content table tbody tr",
+        "partyName": "td:nth-child(1)",
+        "propertyAddress": "td:nth-child(2)",
+        "amount": "td:nth-child(3)",
+        "documentType": "td:nth-child(4)",
+        "recordedAt": "td:nth-child(5)",
+        "parcelId": "td:nth-child(6)",
+        "nextPage": "a[title='Next']"
+      }
+    },
+    {
+      "name": "Johnson",
+      "slug": "johnson",
+      "fipsCode": "18081",
+      "primaryCity": "Franklin",
+      "zipPrefix": "461",
+      "recorderUrl": "https://www.co.johnson.in.us/recorder",
+      "assessorUrl": "https://www.co.johnson.in.us/assessor",
+      "treasurerUrl": "https://www.co.johnson.in.us/treasurer",
+      "courtUrl": "https://public.courts.in.gov/",
+      "selectors": {
+        "resultRow": "main table tbody tr",
+        "partyName": "td:nth-child(1)",
+        "propertyAddress": "td:nth-child(2)",
+        "amount": "td:nth-child(4)",
+        "documentType": "td:nth-child(3)",
+        "recordedAt": "td:nth-child(5)",
+        "parcelId": "td:nth-child(6)",
+        "nextPage": "a.next"
+      }
+    }
+  ]
+}

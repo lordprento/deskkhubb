@@ -24,6 +24,13 @@ async function main() {
     },
   });
 
+  // Weekly automation starts off; enable it from /settings/automation.
+  await prisma.automationConfig.upsert({
+    where: { id: "default" },
+    update: {},
+    create: { id: "default", enabled: false, cronExpression: "0 6 * * 1" },
+  });
+
   const vegas = await prisma.market.create({
     data: {
       name: "Las Vegas",

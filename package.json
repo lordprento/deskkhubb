@@ -17,6 +17,9 @@
     "scrape:sellers": "tsx scripts/scrape-sellers.ts",
     "scrape:probate": "tsx scripts/scrape-probate.ts",
     "scrape:intel": "tsx scripts/scrape-intel.ts",
+    "scrape:all": "tsx scripts/scrape-all.ts",
+    "scrape:canadian": "tsx scripts/scrape-canadian-buyers.ts",
+    "scheduler": "tsx scripts/scheduler.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -38,6 +41,8 @@
     "dotenv": "^17.4.2",
     "lucide-react": "^1.31.0",
     "next": "^16.3.1",
+    "node-cron": "^4.6.0",
+    "nodemailer": "^9.0.5",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.85.0",
@@ -49,6 +54,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^20.19.43",
+    "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.0.5",

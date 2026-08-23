@@ -1,19 +1,33 @@
 /**
- * Scrape cash-buyer signals from Marion County, IN public recorder / county pages.
+ * Scrape cash-buyer signals from Indiana county public recorder / county pages.
  * Does NOT hit Zillow, Redfin, or MLS.
  *
- * Usage: npm run scrape:buyers
- * Output: ./output/cash-buyers-marion.csv
+ * Usage:
+ *   npm run scrape:buyers                      # Marion only (unchanged legacy path)
+ *   npm run scrape:buyers -- --county=marion   # same as above
+ *   npm run scrape:buyers -- --county=all      # all counties in config/counties.json
+ *   npm run scrape:buyers -- --county=lake,allen
+ *
+ * Output: ./output/cash-buyers-marion.csv (Marion)
+ *         ./output/indiana-buyers.csv     (merged, statewide runs)
  */
 import path from "node:path";
 import {
   assertPublicCountyUrl,
   log,
   monthsAgo,
+  printSummary,
   tryFetchHtml,
   writeCsv,
   type CsvRow,
 } from "./scrape-lib";
+import {
+  countyScopeFromArgv,
+  isMarion,
+  persistCountyLeads,
+  runCountyJob,
+  toCsvRows,
+} from "./county-pipeline";
 
 const SOURCE_PAGES = [
   "https://www.indy.gov/agency/marion-county-recorder",
@@ -235,7 +249,12 @@ async function persistToDb(rows: CsvRow[]) {
   }
 }
 
-async function main() {
+/**
+ * The original Marion County pipeline, unchanged: live index hints, optional
+ * Playwright capture, fixture supplement, `cash-buyers-marion.csv`, and fixture
+ * persistence. Returns the rows so statewide runs can merge them.
+ */
+async function runMarionCounty(): Promise<{ rows: CsvRow[]; inserted: number }> {
   log("scrape:buyers start — Marion County public sources only");
   SOURCE_PAGES.forEach((u) => assertPublicCountyUrl(u));
 
@@ -257,7 +276,68 @@ async function main() {
   const out = writeCsv("cash-buyers-marion.csv", rows);
   log(`wrote ${rows.length} rows → ${out}`);
   await persistToDb(fixtures);
+  return { rows, inserted: fixtures.length };
+}
+
+async function main() {
+  const { registry, scope, counties } = countyScopeFromArgv();
+  const marionInScope = counties.some(isMarion);
+  const otherCounties = counties.filter((county) => !isMarion(county));
+
+  // Marion-only keeps the historical single-county behavior and output.
+  if (marionInScope && otherCounties.length === 0) {
+    const marion = await runMarionCounty();
+    log("scrape:buyers done");
+    printSummary({
+      job: "buyers",
+      scope,
+      rows: marion.rows.length,
+      inserted: marion.inserted,
+      countiesOk: 1,
+      countiesFailed: 0,
+    });
+    return;
+  }
+
+  log(`scrape:buyers start — county scope "${scope}" (${counties.length} counties)`);
+  const merged: CsvRow[] = [];
+  let marionInserted = 0;
+
+  if (marionInScope) {
+    const marion = await runMarionCounty();
+    marionInserted = marion.inserted;
+    merged.push(
+      ...marion.rows.map((row) => ({
+        ...row,
+        county: "Marion",
+        countySlug: "marion",
+      })),
+    );
+  }
+
+  const result = await runCountyJob("buyers", otherCounties, registry);
+  merged.push(...toCsvRows(result.rows));
+
+  const out = writeCsv("indiana-buyers.csv", merged);
+  log(`wrote ${merged.length} merged rows → ${out}`);
+
+  const persisted = await persistCountyLeads(result.rows, registry);
+  log(
+    `counties ok=${result.succeeded.length} failed=${result.failed.length} inserted=${persisted.inserted} skipped=${persisted.skipped}`,
+  );
+  for (const failure of result.failed) {
+    log(`  failed: ${failure.county} — ${failure.error}`);
+  }
   log("scrape:buyers done");
+  printSummary({
+    job: "buyers",
+    scope,
+    rows: merged.length,
+    inserted: persisted.inserted + marionInserted,
+    skipped: persisted.skipped,
+    countiesOk: result.succeeded.length + (marionInScope ? 1 : 0),
+    countiesFailed: result.failed.length,
+  });
 }
 
 main().catch((e) => {

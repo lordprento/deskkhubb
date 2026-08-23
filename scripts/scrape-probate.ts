@@ -2,17 +2,29 @@
  * Probate docket leads from Indiana public court information pages.
  * County/court sources only — no Zillow/Redfin/MLS.
  *
- * Usage: npm run scrape:probate
- * Output: ./output/probate-marion.csv
+ * Usage:
+ *   npm run scrape:probate                      # Marion only (unchanged legacy path)
+ *   npm run scrape:probate -- --county=all      # all counties in config/counties.json
+ *
+ * Output: ./output/probate-marion.csv  (Marion)
+ *         ./output/indiana-probate.csv (merged, statewide runs)
  */
 import path from "node:path";
 import {
   assertPublicCountyUrl,
   log,
+  printSummary,
   tryFetchHtml,
   writeCsv,
   type CsvRow,
 } from "./scrape-lib";
+import {
+  countyScopeFromArgv,
+  isMarion,
+  persistCountyLeads,
+  runCountyJob,
+  toCsvRows,
+} from "./county-pipeline";
 
 const SOURCE_PAGES = [
   "https://public.courts.in.gov/",
@@ -52,7 +64,8 @@ function fixtureProbate(): CsvRow[] {
   ];
 }
 
-async function main() {
+/** The original Marion County pipeline, unchanged. Returns rows for merging. */
+async function runMarionCounty(): Promise<{ rows: CsvRow[]; inserted: number }> {
   log("scrape:probate start");
   SOURCE_PAGES.forEach((u) => assertPublicCountyUrl(u));
   const live: CsvRow[] = [];
@@ -109,7 +122,67 @@ async function main() {
   } catch (e) {
     log(`db persist skipped: ${(e as Error).message}`);
   }
+  return { rows, inserted: fixtureProbate().length };
+}
+
+async function main() {
+  const { registry, scope, counties } = countyScopeFromArgv();
+  const marionInScope = counties.some(isMarion);
+  const otherCounties = counties.filter((county) => !isMarion(county));
+
+  if (marionInScope && otherCounties.length === 0) {
+    const marion = await runMarionCounty();
+    log("scrape:probate done");
+    printSummary({
+      job: "probate",
+      scope,
+      rows: marion.rows.length,
+      inserted: marion.inserted,
+      countiesOk: 1,
+      countiesFailed: 0,
+    });
+    return;
+  }
+
+  log(`scrape:probate start — county scope "${scope}" (${counties.length} counties)`);
+  const merged: CsvRow[] = [];
+  let marionInserted = 0;
+
+  if (marionInScope) {
+    const marion = await runMarionCounty();
+    marionInserted = marion.inserted;
+    merged.push(
+      ...marion.rows.map((row) => ({
+        ...row,
+        county: "Marion",
+        countySlug: "marion",
+      })),
+    );
+  }
+
+  const result = await runCountyJob("probate", otherCounties, registry);
+  merged.push(...toCsvRows(result.rows));
+
+  const out = writeCsv("indiana-probate.csv", merged);
+  log(`wrote ${merged.length} merged rows → ${out}`);
+
+  const persisted = await persistCountyLeads(result.rows, registry);
+  log(
+    `counties ok=${result.succeeded.length} failed=${result.failed.length} inserted=${persisted.inserted} skipped=${persisted.skipped}`,
+  );
+  for (const failure of result.failed) {
+    log(`  failed: ${failure.county} — ${failure.error}`);
+  }
   log("scrape:probate done");
+  printSummary({
+    job: "probate",
+    scope,
+    rows: merged.length,
+    inserted: persisted.inserted + marionInserted,
+    skipped: persisted.skipped,
+    countiesOk: result.succeeded.length + (marionInScope ? 1 : 0),
+    countiesFailed: result.failed.length,
+  });
 }
 
 main().catch((e) => {

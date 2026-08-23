@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { Timer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function SettingsPage() {
@@ -7,6 +9,24 @@ export default function SettingsPage() {
         <h1 className="page-title">Settings</h1>
         <p className="page-sub">Workspace defaults for Deal Desk MVP</p>
       </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Automation</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-slate-300">
+          <p>
+            Schedule the Indiana-wide and Canadian scrapers, review run history,
+            and trigger a manual run.
+          </p>
+          <Link
+            href="/settings/automation"
+            className="inline-flex items-center gap-1.5 text-sm text-sky-300 hover:text-sky-200"
+          >
+            <Timer className="h-4 w-4" />
+            Open automation settings
+          </Link>
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader>
           <CardTitle>Defaults</CardTitle>
