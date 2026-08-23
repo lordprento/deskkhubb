@@ -59,6 +59,18 @@ enum LegalStatus {
   UNKNOWN
 }
 
+enum LeadScore {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum JobStatus {
+  RUNNING
+  SUCCESS
+  FAILED
+}
+
 model Market {
   id        String   @id @default(cuid())
   name      String
@@ -171,8 +183,13 @@ model ScrapedLead {
   zip           String?
   amount        Float?
   documentType  String?
+  parcelId      String?
+  county        String?
   rawJson       String?
   createdAt     DateTime @default(now())
+
+  @@index([parcelId])
+  @@index([county])
 }
 
 model CanadianBuyerLead {
@@ -189,9 +206,39 @@ model CanadianBuyerLead {
   maxRehab      Float?
   funding       FundingType @default(CASH)
   sourceUrl     String?
+  sourceName    String?
+  score         LeadScore?
+  targetStates  String?
+  postExcerpt   String?
   notes         String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([score])
+}
+
+/// One execution of a scraper job (manual or scheduled).
+model JobRun {
+  id           String    @id @default(cuid())
+  type         String
+  trigger      String    @default("MANUAL")
+  status       JobStatus @default(RUNNING)
+  startedAt    DateTime  @default(now())
+  endedAt      DateTime?
+  rowsInserted Int       @default(0)
+  error        String?
+  log          String?
+
+  @@index([type, startedAt])
+}
+
+/// Singleton row (id "default") holding weekly automation settings.
+model AutomationConfig {
+  id             String   @id @default("default")
+  enabled        Boolean  @default(false)
+  cronExpression String   @default("0 6 * * 1")
+  notifyEmail    String?
+  updatedAt      DateTime @updatedAt
 }
 
 model MarketIntel {

@@ -23,6 +23,24 @@ const BLOCKED_HOSTS = [
   "har.com",
 ];
 
+/**
+ * Hosts contributed at runtime by `config/counties.json` so statewide runs can
+ * reach other county portals. The Marion allowlist above stays authoritative on
+ * its own; registration only ever widens the set.
+ */
+const extraAllowedHosts = new Set<string>();
+
+export function registerAllowedHosts(hosts: readonly string[]): void {
+  for (const host of hosts) {
+    const normalized = host.trim().toLowerCase();
+    if (normalized) extraAllowedHosts.add(normalized);
+  }
+}
+
+export function allowedHosts(): string[] {
+  return Array.from(new Set([...ALLOWED_HOSTS, ...extraAllowedHosts])).sort();
+}
+
 export function assertPublicCountyUrl(url: string): void {
   let host: string;
   try {
@@ -33,11 +51,45 @@ export function assertPublicCountyUrl(url: string): void {
   if (BLOCKED_HOSTS.some((b) => host === b || host.endsWith(`.${b}`))) {
     throw new Error(`Blocked non-county source: ${host}`);
   }
-  const ok = ALLOWED_HOSTS.some(
+  const ok = allowedHosts().some(
     (a) => host === a || host.endsWith(`.${a.replace(/^www\./, "")}`),
   );
   if (!ok) {
     throw new Error(`Host not on county allowlist: ${host}`);
+  }
+}
+
+/**
+ * Public discussion sources used by the Canadian buyer scraper. Kept separate
+ * from the county allowlist above so county scrapers can never wander onto a
+ * forum (and vice versa). The MLS blocklist still applies to both.
+ */
+export const FORUM_ALLOWED_HOSTS = [
+  "reddit.com",
+  "www.reddit.com",
+  "old.reddit.com",
+  "biggerpockets.com",
+  "www.biggerpockets.com",
+  "facebook.com",
+  "www.facebook.com",
+  "m.facebook.com",
+] as const;
+
+export function assertPublicForumUrl(url: string): void {
+  let host: string;
+  try {
+    host = new URL(url).hostname.toLowerCase();
+  } catch {
+    throw new Error(`Invalid URL: ${url}`);
+  }
+  if (BLOCKED_HOSTS.some((b) => host === b || host.endsWith(`.${b}`))) {
+    throw new Error(`Blocked non-public source: ${host}`);
+  }
+  const ok = FORUM_ALLOWED_HOSTS.some(
+    (a) => host === a || host.endsWith(`.${a.replace(/^www\./, "")}`),
+  );
+  if (!ok) {
+    throw new Error(`Host not on forum allowlist: ${host}`);
   }
 }
 
@@ -87,14 +139,59 @@ export function log(msg: string) {
   return line;
 }
 
-/** Attempt a lightweight fetch of a public page; returns HTML or null. */
-export async function tryFetchHtml(url: string): Promise<string | null> {
+/**
+ * Machine-readable contract between the individual scrapers and the
+ * orchestrator (`run-all-jobs.ts`). Emitted on stdout as a single JSON line so
+ * the parent process never has to scrape human log text.
+ */
+export const SUMMARY_PREFIX = "[deal-desk:summary]";
+
+export type JobSummary = {
+  job: string;
+  scope?: string;
+  rows: number;
+  inserted: number;
+  skipped?: number;
+  countiesOk?: number;
+  countiesFailed?: number;
+};
+
+export function printSummary(summary: JobSummary): void {
+  console.log(`${SUMMARY_PREFIX} ${JSON.stringify(summary)}`);
+}
+
+export function parseSummaries(output: string): JobSummary[] {
+  const summaries: JobSummary[] = [];
+  for (const line of output.split(/\r?\n/)) {
+    const index = line.indexOf(SUMMARY_PREFIX);
+    if (index === -1) continue;
+    const json = line.slice(index + SUMMARY_PREFIX.length).trim();
+    try {
+      summaries.push(JSON.parse(json) as JobSummary);
+    } catch {
+      // Ignore malformed summary lines rather than failing the whole run.
+    }
+  }
+  return summaries;
+}
+
+export const RESEARCH_USER_AGENT =
+  "DealDeskResearchBot/0.1 (+local MVP; public records research)";
+
+/**
+ * Attempt a lightweight fetch of a public page; returns HTML or null.
+ * `userAgent` defaults to the research UA so existing callers are unchanged;
+ * statewide runs pass a rotated agent.
+ */
+export async function tryFetchHtml(
+  url: string,
+  userAgent: string = RESEARCH_USER_AGENT,
+): Promise<string | null> {
   assertPublicCountyUrl(url);
   try {
     const res = await fetch(url, {
       headers: {
-        "user-agent":
-          "DealDeskResearchBot/0.1 (+local MVP; public records research)",
+        "user-agent": userAgent,
         accept: "text/html,application/xhtml+xml",
       },
       signal: AbortSignal.timeout(20_000),

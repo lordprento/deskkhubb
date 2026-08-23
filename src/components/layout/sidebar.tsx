@@ -15,6 +15,7 @@ import {
   Radar,
   Settings,
   Sparkles,
+  Timer,
   Users,
   MapPinned,
 } from "lucide-react";
@@ -29,11 +30,15 @@ const nav = [
   { href: "/buyers/canadian", label: "Canadian", icon: Users },
   { href: "/tasks", label: "Tasks", icon: Gavel },
   { href: "/scraper", label: "Scraper", icon: Radar },
+  { href: "/settings/automation", label: "Automation", icon: Timer },
   { href: "/intelligence", label: "Intelligence", icon: Sparkles },
   { href: "/documents", label: "Documents", icon: FileText },
   { href: "/markets", label: "Markets", icon: MapPinned },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
+
+/** Links that should only highlight on an exact path match. */
+const EXACT_MATCH_HREFS = new Set(["/today", "/buyers", "/settings"]);
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -95,10 +100,8 @@ export function Sidebar() {
         {nav.map((item) => {
           const active =
             pathname === item.href ||
-            (item.href !== "/today" &&
-              item.href !== "/buyers" &&
-              pathname.startsWith(item.href)) ||
-            (item.href === "/buyers" && pathname === "/buyers");
+            (!EXACT_MATCH_HREFS.has(item.href) &&
+              pathname.startsWith(item.href));
           const Icon = item.icon;
           return (
             <Link
