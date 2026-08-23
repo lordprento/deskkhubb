@@ -152,13 +152,13 @@ export default async function AutomationSettingsPage() {
                     {formatDuration(durationOf(run.startedAt, run.endedAt))}
                   </TableCell>
                   <TableCell>{run.rowsInserted}</TableCell>
-                  <TableCell className="max-w-[320px]">
+                  <TableCell className="max-w-[420px]">
                     {run.log ? (
                       <details>
                         <summary className="cursor-pointer text-xs text-sky-300">
                           View log
                         </summary>
-                        <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded-md border border-white/10 bg-slate-950/80 p-2 font-mono text-[11px] leading-relaxed text-slate-300">
+                        <pre className="mt-2 max-h-64 overflow-y-auto whitespace-pre-wrap break-all rounded-md border border-white/10 bg-slate-950/80 p-2 font-mono text-[11px] leading-relaxed text-slate-300">
                           {run.log}
                         </pre>
                       </details>

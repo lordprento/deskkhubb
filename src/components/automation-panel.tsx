@@ -56,6 +56,8 @@ export function AutomationPanel({
   const [scope, setScope] = useState("all");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [runMessage, setRunMessage] = useState<string | null>(null);
+  const [runError, setRunError] = useState<string | null>(null);
   const [log, setLog] = useState("");
   const [running, setRunning] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -94,8 +96,8 @@ export function AutomationPanel({
 
   async function runNow() {
     setRunning(true);
-    setError(null);
-    setMessage(null);
+    setRunError(null);
+    setRunMessage(null);
     setLog("");
     try {
       const res = await fetch("/api/scraper/run", {
@@ -104,7 +106,7 @@ export function AutomationPanel({
         body: JSON.stringify({ job: "all", county: scope }),
       });
       if (!res.ok || !res.body) {
-        setError(`Request failed: HTTP ${res.status}`);
+        setRunError(`Request failed: HTTP ${res.status}`);
         return;
       }
       const reader = res.body.getReader();
@@ -116,9 +118,9 @@ export function AutomationPanel({
         acc += decoder.decode(value, { stream: true });
         setLog(acc);
       }
-      setMessage("Manual run finished — reload to refresh run history.");
+      setRunMessage("Manual run finished — reload to refresh run history.");
     } catch (e) {
-      setError((e as Error).message);
+      setRunError((e as Error).message);
     } finally {
       setRunning(false);
     }
@@ -248,6 +250,12 @@ export function AutomationPanel({
               )}
               {running ? "Running all scrapers…" : "Run all scrapers now"}
             </Button>
+            {runMessage && (
+              <span className="pb-2 text-xs text-green-400">{runMessage}</span>
+            )}
+            {runError && (
+              <span className="pb-2 text-xs text-red-400">{runError}</span>
+            )}
           </div>
           <p className="text-xs text-slate-400">
             Runs buyers → sellers → probate → Canadian sequentially, recording
